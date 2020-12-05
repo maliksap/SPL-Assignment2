@@ -37,6 +37,7 @@ public class Ewoks {
         for(int j=1 ; j<=n ; j++)
         {
             ewoksMap.put(j, new Ewok(j,true));
+            lockMap.put(j,new AtomicBoolean(true));
         }
     }
 
@@ -45,8 +46,26 @@ public class Ewoks {
         Collections.sort(ewoksToAcquire);
         for(int serial: ewoksToAcquire)
         {
-
+             while (!(lockMap.get(serial)).compareAndSet(true, false))
+             {
+                 try{
+                     this.wait();
+                 }
+                 catch (InterruptedException e){
+                 }
+             }
+             ewoksMap.get(serial).acquire();
         }
-        return true;//just for test
+        return true;
+    }
+    private void releaseEwoks(List<Integer> ewoksToRelease)
+    {
+        for (int serial : ewoksToRelease)
+        {
+            ewoksMap.get(serial).release();
+            lockMap.get(serial).compareAndSet(false,true);
+            this.notifyAll();
+        }
+
     }
 }

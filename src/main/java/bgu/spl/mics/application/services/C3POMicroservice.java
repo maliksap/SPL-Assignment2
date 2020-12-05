@@ -27,12 +27,11 @@ public class C3POMicroservice extends MicroService {
         Callback<AttackEvent> attEventCallback=new Callback() {
             @Override
             public void call(Object c) {
-//                try{
-//
-//                   //it receives an Attack and try to own the resources it needs.
-//                    //then the thread will go to sleep for the amount of time specified in
-//                    // the field member "duration" of the Attack it received
-//                }catch (InterruptedException e){}
+                try{
+                   //it receives an Attack and try to own the resources it needs.
+                    //then the thread will go to sleep for the amount of time specified in
+                    // the field member "duration" of the Attack it received
+                }catch (InterruptedException e){}
                 //TODO sends broadcast and update diary?
             }
         };

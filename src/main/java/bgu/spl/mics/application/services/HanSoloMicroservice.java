@@ -1,6 +1,7 @@
 package bgu.spl.mics.application.services;
 
 
+import bgu.spl.mics.Callback;
 import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.AttackEvent;
@@ -25,5 +26,12 @@ public class HanSoloMicroservice extends MicroService {
         MessageBusImpl.getInstance().register(this);
 //        subscribeEvent(AttackEvent.class, attEventCallback);
         //subscribe to relevant broadcasts
+        Callback<AttackEvent> attEventCallback=new Callback(){
+
+            @Override
+            public void call(Object c) {
+
+            }
+        }
     }
 }
