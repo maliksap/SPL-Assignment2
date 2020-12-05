@@ -23,7 +23,7 @@ public class HanSoloMicroservice extends MicroService {
     @Override
     protected void initialize() {
         MessageBusImpl.getInstance().register(this);
-        subscribeEvent(AttackEvent.class, attEventCallback);
+//        subscribeEvent(AttackEvent.class, attEventCallback);
         //subscribe to relevant broadcasts
     }
 }

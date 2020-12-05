@@ -69,7 +69,7 @@ class MessageBusImplTest {
         mBus.subscribeBroadcast(b.getClass(), C3PO);
         mBus.sendBroadcast(b);
         try{
-            assertEquals(attEvent,mBus.awaitMessage(C3PO));
+            assertEquals(b,mBus.awaitMessage(C3PO));
         }
         catch (InterruptedException e){}
     }

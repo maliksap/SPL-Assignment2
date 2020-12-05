@@ -1,9 +1,5 @@
 package bgu.spl.mics;
-import bgu.spl.mics.application.messages.AttackEvent;
-import bgu.spl.mics.application.messages.BombDestroyerEvent;
-import bgu.spl.mics.application.messages.DeactivationEvent;
 
-import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -17,7 +13,7 @@ public class MessageBusImpl implements MessageBus {
 	ConcurrentHashMap<MicroService, BlockingQueue<Message>> microServicesQueues;
 	ConcurrentHashMap<Class<? extends Message> , BlockingQueue<MicroService>> subEventQueues;
 	ConcurrentHashMap<Class<? extends Message>, BlockingQueue<MicroService>>  broadcastQueues ;
-	ConcurrentHashMap<Event,Future> futerEvents;
+	ConcurrentHashMap<Event,Future> futureEvents;
 	private static MessageBusImpl instance = null;
 
 	private MessageBusImpl()
@@ -25,7 +21,7 @@ public class MessageBusImpl implements MessageBus {
 		microServicesQueues = new ConcurrentHashMap<>();
 		subEventQueues = new ConcurrentHashMap<>();
 		broadcastQueues = new ConcurrentHashMap<>();
-		futerEvents = new ConcurrentHashMap<>();
+		futureEvents = new ConcurrentHashMap<>();
 	}
 
 
@@ -58,7 +54,7 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override @SuppressWarnings("unchecked")
 	public <T> void complete(Event<T> e, T result) {
-		futerEvents.get(e).resolve(result);
+		futureEvents.get(e).resolve(result);
 //		if(e.getClass().equals(AttackEvent.class))
 // 			((AttackEvent)e).getFuture().resolve(result);
 //		else if(e.getClass().getName().equals("bgu.spl.mics.application.messages.BombDestroyerEvent"))
@@ -83,7 +79,7 @@ public class MessageBusImpl implements MessageBus {
 		MicroService m = subEventQueues.get(e.getClass()).remove();
 		microServicesQueues.get(m).add(e);
 		subEventQueues.get(e.getClass()).add(m);
-		futerEvents.put(e, ans);
+		futureEvents.put(e, ans);
 		return ans;
 
 //		if(subEventQueues.get(e.getClass()).isEmpty()){
@@ -128,10 +124,11 @@ public class MessageBusImpl implements MessageBus {
 	public Message awaitMessage(MicroService m) throws InterruptedException {
 		Message ans;
 		try{
-			ans = microServicesQueues.get(m).poll();
+			ans = microServicesQueues.get(m).take();
 			return ans;
 		}
-		catch (InterruptedException) {}
+		catch (InterruptedException e) {}
 
+		return null;
 	}
 }
