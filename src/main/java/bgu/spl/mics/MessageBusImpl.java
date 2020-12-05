@@ -5,7 +5,6 @@ import bgu.spl.mics.application.messages.DeactivationEvent;
 
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -14,18 +13,16 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Only private fields and methods can be added to this class.
  */
 public class MessageBusImpl implements MessageBus {
-	ConcurrentHashMap<MicroService, BlockingQueue<Message>> microServicesQueues;
-	ConcurrentHashMap<Class<? extends Message> , BlockingQueue<MicroService>> subEventQueues;
-	ConcurrentHashMap<Class<? extends Message>, BlockingQueue<MicroService>>  broadcastQueues ;
-	ConcurrentHashMap<Event,Future> futerEvents;
+	HashMap<MicroService, BlockingQueue<Message>>  microServicesQueues;
+	HashMap<String, BlockingQueue<MicroService>> subEventQueues;
+	HashMap<String, BlockingQueue<MicroService>>  broadcastQueues ;
 	private static MessageBusImpl instance = null;
 
 	private MessageBusImpl()
 	{
-		microServicesQueues = new ConcurrentHashMap<>();
-		subEventQueues = new ConcurrentHashMap<>();
-		broadcastQueues = new ConcurrentHashMap<>();
-		futerEvents = new ConcurrentHashMap<>();
+		microServicesQueues = new HashMap<>();
+		subEventQueues = new HashMap<>();
+		broadcastQueues = new HashMap<>();
 	}
 
 
@@ -40,37 +37,36 @@ public class MessageBusImpl implements MessageBus {
 	
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-		if (!subEventQueues.containsKey(type))
+		if (!subEventQueues.containsKey(type.getName()))
 		{
-			subEventQueues.put(type, new LinkedBlockingQueue<>());
+			subEventQueues.put(type.getName(), new LinkedBlockingQueue<MicroService>());
 		}
-		subEventQueues.get(type).add(m);
+		subEventQueues.get(type.getName()).add(m);
 	}
 
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
 		if (!broadcastQueues.containsKey(type.getName()))
 		{
-			broadcastQueues.put(type, new LinkedBlockingQueue<>());
+			broadcastQueues.put(type.getName(), new LinkedBlockingQueue<MicroService>());
 		}
-		broadcastQueues.get(type).add(m);
+		broadcastQueues.get(type.getName()).add(m);
     }
 
 	@Override @SuppressWarnings("unchecked")
 	public <T> void complete(Event<T> e, T result) {
-		futerEvents.get(e).resolve(result);
-//		if(e.getClass().equals(AttackEvent.class))
-// 			((AttackEvent)e).getFuture().resolve(result);
-//		else if(e.getClass().getName().equals("bgu.spl.mics.application.messages.BombDestroyerEvent"))
-//			((BombDestroyerEvent)e).getFuture().resolve(result);
-//		else
-//			((DeactivationEvent)e).getFuture().resolve(result);
+		if(e.getClass().getName().equals("bgu.spl.mics.application.messages.AttackEvent"))
+			((AttackEvent)e).getFuture().resolve(result);
+		else if(e.getClass().getName().equals("bgu.spl.mics.application.messages.BombDestroyerEvent"))
+			((BombDestroyerEvent)e).getFuture().resolve(result);
+		else
+			((DeactivationEvent)e).getFuture().resolve(result);
 	}
 
 
 	@Override
 	public void sendBroadcast(Broadcast b) {
-		for (MicroService m: broadcastQueues.get(b.getClass()))
+		for (MicroService m: broadcastQueues.get(b.getClass().getName()))
 		{
 			microServicesQueues.get(m).add(b);
 		}
@@ -80,30 +76,29 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public <T> Future<T> sendEvent(Event<T> e) {
 		Future<T> ans = new Future<>();
-		MicroService m = subEventQueues.get(e.getClass()).remove();
+		if(subEventQueues.get(e.getClass().getName()).isEmpty()){
+			ans.resolve(null);
+		}
+		MicroService m = subEventQueues.get(e.getClass().getName()).remove();
 		microServicesQueues.get(m).add(e);
-		subEventQueues.get(e.getClass()).add(m);
-		futerEvents.put(e, ans);
-		return ans;
+		subEventQueues.get(e.getClass().getName()).add(m);
+		if(e.getClass().getName().equals("bgu.spl.mics.application.messages.AttackEvent"))
+		{
+			((AttackEvent)e).setFuture( ans);
+			return ans;
+		}
+		else if(e.getClass().getName().equals("bgu.spl.mics.application.messages.BombDestroyerEvent"))
+		{
+			((BombDestroyerEvent)e).setFuture(ans);
+			return ans;
+		}
+		else
+		{
+			((DeactivationEvent)e).setFuture( ans);
+			return ans;
+		}
 
-//		if(subEventQueues.get(e.getClass()).isEmpty()){
-//			ans.resolve(null);
-//		}
-//		if(e.getClass().equals(AttackEvent.class))
-//		{
-//			((AttackEvent)e).setFuture(ans);
-//			return ans;
-//		}
-//		else if(e.getClass().getName().equals("bgu.spl.mics.application.messages.BombDestroyerEvent"))
-//		{
-//			((BombDestroyerEvent)e).setFuture(ans);
-//			return ans;
-//		}
-//		else
-//		{
-//			((DeactivationEvent)e).setFuture( ans);
-//			return ans;
-//		}
+
 	}
 
 	@Override
@@ -114,11 +109,11 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public void unregister(MicroService m) {   //can we assume valid input? or do we need to make sure that m is registered?
 		microServicesQueues.remove(m);
-		for (Class<? extends Message> s: broadcastQueues.keySet())
+		for (String s: broadcastQueues.keySet())
 		{
 			broadcastQueues.get(s).remove(m);
 		}
-		for (Class<? extends Message> s: subEventQueues.keySet())
+		for (String s: subEventQueues.keySet())
 		{
 			subEventQueues.get(s).remove(m);
 		}
