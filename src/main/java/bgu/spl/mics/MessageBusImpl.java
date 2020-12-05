@@ -98,7 +98,6 @@ public class MessageBusImpl implements MessageBus {
 			return ans;
 		}
 
-
 	}
 
 	@Override
@@ -123,10 +122,10 @@ public class MessageBusImpl implements MessageBus {
 	public Message awaitMessage(MicroService m) throws InterruptedException {
 		Message ans;
 		try{
-			ans = microServicesQueues.get(m).poll();
+			ans = microServicesQueues.get(m).take();
 			return ans;
 		}
-		catch (InterruptedException) {}
-
+		catch (InterruptedException e) {}
+		return null;
 	}
 }
