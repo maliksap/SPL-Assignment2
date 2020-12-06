@@ -4,7 +4,9 @@ import bgu.spl.mics.Callback;
 import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.BombDestroyerEvent;
+import bgu.spl.mics.application.messages.BombFinishBroadcast;
 import bgu.spl.mics.application.messages.DeactivationEvent;
+import bgu.spl.mics.application.messages.DeactivationFinishBroadcast;
 
 /**
  * R2D2Microservices is in charge of the handling {@link DeactivationEvent}.
@@ -24,13 +26,24 @@ public class R2D2Microservice extends MicroService {
     @Override
     protected void initialize() {
         MessageBusImpl.getInstance().register(this);
-        Callback<DeactivationEvent> deactCallback=new Callback() {
+        Callback<BombFinishBroadcast> BombBroadcastCallback = new Callback<BombFinishBroadcast>() {
             @Override
-            public void call(Object c) {
+            public void call(BombFinishBroadcast c) {
+                terminate();  //we need to check if its good
+            }
+        };
+        subscribeBroadcast(BombFinishBroadcast.class, BombBroadcastCallback);
+
+
+        Callback<DeactivationEvent> deactCallback=new Callback<DeactivationEvent>() {
+            @Override
+            public void call(DeactivationEvent c) {
                 try{
                     this.wait(duration); //sleep???????
+                    complete(c , true);
+                    sendBroadcast(new DeactivationFinishBroadcast());
                 }catch (InterruptedException e){}
-                //TODO sends broadcast and update diary?
+                //TODO update diary?
             }
         };
         subscribeEvent(DeactivationEvent.class, deactCallback);

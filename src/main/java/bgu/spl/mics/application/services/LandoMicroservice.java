@@ -5,6 +5,7 @@ import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.messages.BombDestroyerEvent;
+import bgu.spl.mics.application.messages.BombFinishBroadcast;
 
 /**
  * LandoMicroservice
@@ -21,17 +22,28 @@ public class LandoMicroservice  extends MicroService {
     @Override
     protected void initialize() {
         MessageBusImpl.getInstance().register(this);
-        Callback<BombDestroyerEvent> bombEventCallback=new Callback() {
+
+        Callback<BombFinishBroadcast> BombBroadcastCallback = new Callback<BombFinishBroadcast>() {
             @Override
-            public void call(Object c) {
+            public void call(BombFinishBroadcast c) {
+                terminate();  //we need to check if its good
+            }
+        };
+        subscribeBroadcast(BombFinishBroadcast.class, BombBroadcastCallback);
+
+        Callback<BombDestroyerEvent> bombEventCallback=new Callback<BombDestroyerEvent>() {
+            @Override
+            public void call(BombDestroyerEvent c) {
                 try{
                     this.wait(duration); //sleep???????
+                    complete(c, true);
+                    sendBroadcast(new BombFinishBroadcast());
                 }catch (InterruptedException e){}
-                //TODO sends broadcast and update diary?
+                //TODO update diary?
             }
         };
         subscribeEvent(BombDestroyerEvent.class, bombEventCallback);
-        // TODO subscribe to relevant broadcasts
+
 
     }
 }

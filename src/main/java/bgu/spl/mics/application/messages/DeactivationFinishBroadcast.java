@@ -1,11 +1,7 @@
 package bgu.spl.mics.application.messages;
-
 import bgu.spl.mics.Broadcast;
-import bgu.spl.mics.Event;
 
-public class DeactivationFinishBroadcast implements Broadcast {
-
+public class DeactivationFinishBroadcast implements Broadcast{
 
     public DeactivationFinishBroadcast(){}
 }
-

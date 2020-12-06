@@ -3,10 +3,7 @@ package bgu.spl.mics.application.services;
 import bgu.spl.mics.Callback;
 import bgu.spl.mics.Future;
 import bgu.spl.mics.MessageBusImpl;
-import bgu.spl.mics.application.messages.AttackEvent;
-import bgu.spl.mics.application.messages.AttackFinishBroadcast;
-import bgu.spl.mics.application.messages.DeactivationEvent;
-import bgu.spl.mics.application.messages.DeactivationFinishBroadcast;
+import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.application.passiveObjects.Attack;
 
 import bgu.spl.mics.MicroService;
@@ -39,7 +36,7 @@ public class LeiaMicroservice extends MicroService {
     @Override
     protected void initialize() {
         MessageBusImpl.getInstance().register(this);
-        Callback<AttackFinishBroadcast> DeacBroadcastCallback = new Callback<AttackFinishBroadcast>() {
+        Callback<AttackFinishBroadcast> AttBroadcastCallback = new Callback<AttackFinishBroadcast>() {
             @Override
             public void call(AttackFinishBroadcast c) {
                 boolean attacksDone = true;
@@ -53,8 +50,24 @@ public class LeiaMicroservice extends MicroService {
                     sendEvent(new DeactivationEvent());
             }
         };
+        subscribeBroadcast(AttackFinishBroadcast.class ,AttBroadcastCallback );
+        Callback<DeactivationFinishBroadcast> DecBroadcastCallback = new Callback<DeactivationFinishBroadcast>() {
+            @Override
+            public void call(DeactivationFinishBroadcast c) {
+                sendEvent(new BombDestroyerEvent());
+            }
+        };
+        subscribeBroadcast(DeactivationFinishBroadcast.class, DecBroadcastCallback);
 
-        subscribeBroadcast(AttackFinishBroadcast.class ,DeacBroadcastCallback );
+        Callback<BombFinishBroadcast> BombBroadcastCallback = new Callback<BombFinishBroadcast>() {
+            @Override
+            public void call(BombFinishBroadcast c) {
+                terminate();  //we need to check if its good
+            }
+        };
+
+        subscribeBroadcast(BombFinishBroadcast.class, BombBroadcastCallback);
+
 
         try{
         wait(600);
