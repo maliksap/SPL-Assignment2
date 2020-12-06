@@ -5,6 +5,7 @@ import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.messages.BombDestroyerEvent;
+import bgu.spl.mics.application.passiveObjects.Ewoks;
 
 
 /**
@@ -24,20 +25,18 @@ public class C3POMicroservice extends MicroService {
     @Override
     protected void initialize() {
         MessageBusImpl.getInstance().register(this);
-        Callback<AttackEvent> attEventCallback=new Callback() {
+        Callback<AttackEvent> attEventCallback=new Callback<AttackEvent>() {
             @Override
-            public void call(Object c) {
+            public void call(AttackEvent att) { //attEvent
                 try{
-                   //it receives an Attack and try to own the resources it needs.
-                    //then the thread will go to sleep for the amount of time specified in
-                    // the field member "duration" of the Attack it received
+                    Ewoks.getInstance().acquireEwoks(att.getAttack().getSerials());
+                    this.wait(att.getAttack().getDuration()); // TODO: change wait to sleep?? if yes, how?
+
                 }catch (InterruptedException e){}
                 //TODO sends broadcast and update diary?
             }
         };
         subscribeEvent(AttackEvent.class, attEventCallback);
         // TODO subscribe to relevant broadcasts?
-
-
     }
 }

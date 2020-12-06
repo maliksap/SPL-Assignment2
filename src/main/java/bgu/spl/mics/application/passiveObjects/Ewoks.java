@@ -41,7 +41,7 @@ public class Ewoks {
         }
     }
 
-    private boolean acquireEwoks(List<Integer> ewoksToAcquire)
+    public boolean acquireEwoks(List<Integer> ewoksToAcquire)
     {
         Collections.sort(ewoksToAcquire);
         for(int serial: ewoksToAcquire)
@@ -58,7 +58,7 @@ public class Ewoks {
         }
         return true;
     }
-    private void releaseEwoks(List<Integer> ewoksToRelease)
+    public void releaseEwoks(List<Integer> ewoksToRelease)
     {
         for (int serial : ewoksToRelease)
         {
