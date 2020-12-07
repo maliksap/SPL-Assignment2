@@ -1,5 +1,7 @@
 package bgu.spl.mics;
 
+import bgu.spl.mics.application.messages.BombFinishBroadcast;
+
 import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 
@@ -34,6 +36,7 @@ public abstract class MicroService implements Runnable {
     	myName=name;
     	actionMap=new HashMap<>();
         running=true;
+
     }
 
     /**
@@ -59,7 +62,9 @@ public abstract class MicroService implements Runnable {
      */
     protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
     	actionMap.putIfAbsent(type,callback);
-    	MessageBusImpl.getInstance().subscribeEvent(type,this);
+        String s = type.getName();
+
+        MessageBusImpl.getInstance().subscribeEvent(type,this);
     }
 
     /**
@@ -157,8 +162,8 @@ public abstract class MicroService implements Runnable {
     	initialize();
         while(running){
             try {
-                Message outputMassage = MessageBusImpl.getInstance().awaitMessage(this);
-                actionMap.get(outputMassage).call(outputMassage);
+                Message outputMessage = MessageBusImpl.getInstance().awaitMessage(this);
+                actionMap.get(outputMessage.getClass()).call(outputMessage);
 
             }catch (InterruptedException e){}
 

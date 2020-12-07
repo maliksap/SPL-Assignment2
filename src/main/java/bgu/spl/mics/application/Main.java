@@ -49,6 +49,12 @@ public class Main {
 			Thread R2D2=new Thread(r2D2);
 			Thread Lando=new Thread(lando);
 
+			Leia.setName("Leia-Thread");
+			C3PO.setName("C3PO-Thread");
+			HanSolo.setName("HanSolo-Thread");
+			R2D2.setName("R2D2-Thread");
+			Lando.setName("Lando-Thread");
+
 			C3PO.start();
 			HanSolo.start();
 			R2D2.start();

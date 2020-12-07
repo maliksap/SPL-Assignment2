@@ -25,8 +25,8 @@ public class R2D2Microservice extends MicroService {
 
     public R2D2Microservice(long duration, CountDownLatch countDownLatch) {
         super("R2D2");
-        duration=duration;
-        countDownLatch=countDownLatch;
+        this.duration=duration;
+        this.countDownLatch=countDownLatch;
 
     }
 

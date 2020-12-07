@@ -71,9 +71,9 @@ public class LeiaMicroservice extends MicroService {
         subscribeBroadcast(BombFinishBroadcast.class, BombBroadcastCallback);
 
 
-        try{
-        wait(600);
-        }catch (InterruptedException e){}
+//        try{
+//        wait(600);
+//        }catch (InterruptedException e){}
 
         for (int i = 0 ; i<eventsFollowUp.length ; i++){
             eventsFollowUp[i] = sendEvent(new AttackEvent(attacks[i]));

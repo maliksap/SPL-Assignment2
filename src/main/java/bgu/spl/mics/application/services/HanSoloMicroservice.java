@@ -26,7 +26,7 @@ public class HanSoloMicroservice extends MicroService {
 
     public HanSoloMicroservice(CountDownLatch countDownLatch) {
         super("Han");
-        countDownLatch=countDownLatch;
+        this.countDownLatch=countDownLatch;
     }
 
 
@@ -49,6 +49,7 @@ public class HanSoloMicroservice extends MicroService {
                     Ewoks.getInstance().acquireEwoks(att.getAttack().getSerials());
                     this.wait(att.getAttack().getDuration());
                     complete(att, true);
+                    Ewoks.getInstance().releaseEwoks(att.getAttack().getSerials());
                     sendBroadcast(new AttackFinishBroadcast());
                     // TODO: change wait to sleep?? if yes, how?
 

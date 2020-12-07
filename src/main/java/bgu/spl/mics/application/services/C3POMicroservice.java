@@ -26,7 +26,7 @@ public class C3POMicroservice extends MicroService {
 
     public C3POMicroservice(CountDownLatch countDownLatch) {
         super("C3PO");
-        countDownLatch=countDownLatch;
+        this.countDownLatch=countDownLatch;
     }
 
     @Override
@@ -48,6 +48,7 @@ public class C3POMicroservice extends MicroService {
                     Ewoks.getInstance().acquireEwoks(att.getAttack().getSerials());
                     this.wait(att.getAttack().getDuration());
                     complete(att, true);
+                    Ewoks.getInstance().releaseEwoks(att.getAttack().getSerials());
                     sendBroadcast(new AttackFinishBroadcast());
                     // TODO: change wait to sleep?? if yes, how?
 
