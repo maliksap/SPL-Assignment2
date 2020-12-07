@@ -47,7 +47,8 @@ public class R2D2Microservice extends MicroService {
             @Override
             public void call(DeactivationEvent c) {
                 try{
-                    this.wait(duration); //sleep???????
+//                    this.wait(duration); //sleep??????? -original do not change
+                    Thread.sleep(duration);  //sapir's change
                     complete(c , true);
                     sendBroadcast(new DeactivationFinishBroadcast());
                 }catch (InterruptedException e){}
@@ -55,7 +56,6 @@ public class R2D2Microservice extends MicroService {
             }
         };
         subscribeEvent(DeactivationEvent.class, deactCallback);
-        // TODO subscribe to relevant broadcasts
 
         countDownLatch.countDown();
 

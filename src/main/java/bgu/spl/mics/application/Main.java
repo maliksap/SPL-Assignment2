@@ -1,4 +1,5 @@
 package bgu.spl.mics.application;
+import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.application.passiveObjects.Diary;
 import bgu.spl.mics.application.passiveObjects.Ewoks;
 import bgu.spl.mics.application.passiveObjects.Input;
@@ -42,6 +43,8 @@ public class Main {
 			HanSoloMicroservice hanSolo=new HanSoloMicroservice(countDownLatch);
 			R2D2Microservice r2D2=new R2D2Microservice(in.getR2D2(),countDownLatch);
 			LandoMicroservice lando=new LandoMicroservice(in.getLando(),countDownLatch);
+
+			MessageBusImpl.getInstance();  // initialize messageBus before threads starts to run added by sapir
 
 			Thread Leia=new Thread(leia);
 			Thread C3PO=new Thread(c3PO);

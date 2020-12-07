@@ -36,7 +36,6 @@ public abstract class MicroService implements Runnable {
     	myName=name;
     	actionMap=new HashMap<>();
         running=true;
-
     }
 
     /**
@@ -159,7 +158,7 @@ public abstract class MicroService implements Runnable {
      */
     @Override
     public final void run() {
-    	initialize();
+    	this.initialize();
         while(running){
             try {
                 Message outputMessage = MessageBusImpl.getInstance().awaitMessage(this);
@@ -168,6 +167,7 @@ public abstract class MicroService implements Runnable {
             }catch (InterruptedException e){}
 
         }
+        MessageBusImpl.getInstance().unregister(this);
     }
 
 }

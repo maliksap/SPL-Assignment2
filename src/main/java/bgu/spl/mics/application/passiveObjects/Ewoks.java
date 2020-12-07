@@ -91,7 +91,7 @@ public class Ewoks {
                 while (!(ewoksMap.get(serial).isAvailable()))
                 {
                     try{
-                        this.wait();
+                        wait();
                     }
                     catch (InterruptedException e){
                     }
@@ -118,7 +118,7 @@ public class Ewoks {
         {
             synchronized (ewoksMap.get(serial)){
                 ewoksMap.get(serial).release();
-                this.notifyAll();
+                notifyAll();
             }
         }
     }

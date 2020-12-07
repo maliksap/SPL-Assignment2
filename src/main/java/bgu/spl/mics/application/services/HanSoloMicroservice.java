@@ -47,7 +47,8 @@ public class HanSoloMicroservice extends MicroService {
             public void call(AttackEvent att) { //attEvent
                 try{
                     Ewoks.getInstance().acquireEwoks(att.getAttack().getSerials());
-                    this.wait(att.getAttack().getDuration());
+//                  this.wait(att.getAttack().getDuration());           // original do not change
+                    Thread.sleep(att.getAttack().getDuration());        //sapir's change
                     complete(att, true);
                     Ewoks.getInstance().releaseEwoks(att.getAttack().getSerials());
                     sendBroadcast(new AttackFinishBroadcast());

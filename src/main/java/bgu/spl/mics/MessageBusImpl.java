@@ -18,10 +18,10 @@ public class MessageBusImpl implements MessageBus {
 
 	private MessageBusImpl()
 	{
-		microServicesQueues = new ConcurrentHashMap<>();
-		subEventQueues = new ConcurrentHashMap<>();
-		broadcastQueues = new ConcurrentHashMap<>();
-		futureEvents = new ConcurrentHashMap<>();
+		this.microServicesQueues = new ConcurrentHashMap<>();
+		this.subEventQueues = new ConcurrentHashMap<>();
+		this.broadcastQueues = new ConcurrentHashMap<>();
+		this.futureEvents = new ConcurrentHashMap<>();
 	}
 
 
@@ -50,7 +50,7 @@ public class MessageBusImpl implements MessageBus {
 			broadcastQueues.put(type, new LinkedBlockingQueue<>());
 		}
 		broadcastQueues.get(type).add(m);
-    }
+	}
 
 	@Override @SuppressWarnings("unchecked")
 	public <T> void complete(Event<T> e, T result) {
@@ -103,9 +103,11 @@ public class MessageBusImpl implements MessageBus {
 	}
 
 	@Override
-	public void register(MicroService m) {
-		microServicesQueues.putIfAbsent(m, new LinkedBlockingQueue<Message>());  //can we assume valid input? or do we need to make sure that m is not already registered?
-		}
+	  public void register(MicroService m) {
+		microServicesQueues.putIfAbsent(m, new LinkedBlockingQueue<Message>());//can we assume valid input? or do we need to make sure that m is not already registered?
+		System.out.println("microservice: " + m.getName() + "	microservicequeues keys: " + microServicesQueues.size());
+
+	}
 
 	@Override
 	public void unregister(MicroService m) {   //can we assume valid input? or do we need to make sure that m is registered?
@@ -124,7 +126,9 @@ public class MessageBusImpl implements MessageBus {
 	public Message awaitMessage(MicroService m) throws InterruptedException {
 		Message ans;
 		try{
+//			System.out.println("microservice: " + m.getName() + "	microservicequeues keys: " + microServicesQueues.toString());
 			ans = microServicesQueues.get(m).take();
+//			System.out.println("microservice: " + m.getName() +"	recieved message: " + ans.toString());
 			return ans;
 		}
 		catch (InterruptedException e) {}

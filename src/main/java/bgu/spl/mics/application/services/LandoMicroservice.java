@@ -42,11 +42,11 @@ public class LandoMicroservice  extends MicroService {
             @Override
             public void call(BombDestroyerEvent c) {
                 try{
-                    this.wait(duration); //sleep???????
+//                    this.wait(duration); //sleep??????? -original do not change
+                    Thread.sleep(duration);  //sapir's change
                     complete(c, true);
                     sendBroadcast(new BombFinishBroadcast());
                 }catch (InterruptedException e){}
-                //TODO update diary?
             }
         };
         subscribeEvent(BombDestroyerEvent.class, bombEventCallback);
