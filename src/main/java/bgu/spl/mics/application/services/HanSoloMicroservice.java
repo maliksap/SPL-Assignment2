@@ -7,6 +7,7 @@ import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.messages.AttackFinishBroadcast;
 import bgu.spl.mics.application.messages.BombFinishBroadcast;
+import bgu.spl.mics.application.passiveObjects.Diary;
 import bgu.spl.mics.application.passiveObjects.Ewoks;
 
 import java.util.concurrent.CountDownLatch;
@@ -35,6 +36,7 @@ public class HanSoloMicroservice extends MicroService {
         Callback<BombFinishBroadcast> BombBroadcastCallback = new Callback<BombFinishBroadcast>() {
             @Override
             public void call(BombFinishBroadcast c) {
+                Diary.getInstance().setHanSoloTerminate(System.currentTimeMillis());
                 terminate();  //we need to check if its good
             }
         };
@@ -51,7 +53,9 @@ public class HanSoloMicroservice extends MicroService {
                     // TODO: change wait to sleep?? if yes, how?
 
                 }catch (InterruptedException e){}
-                //TODO  update diary?
+                Diary.getInstance().increaseTotalAttacks();
+                Diary.getInstance().setHanSoloFinish(System.currentTimeMillis());
+
             }
         };
         subscribeEvent(AttackEvent.class, attEventCallback);

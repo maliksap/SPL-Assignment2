@@ -7,6 +7,7 @@ import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.messages.AttackFinishBroadcast;
 import bgu.spl.mics.application.messages.BombDestroyerEvent;
 import bgu.spl.mics.application.messages.BombFinishBroadcast;
+import bgu.spl.mics.application.passiveObjects.Diary;
 import bgu.spl.mics.application.passiveObjects.Ewoks;
 
 import java.util.concurrent.CountDownLatch;
@@ -34,6 +35,7 @@ public class C3POMicroservice extends MicroService {
         Callback<BombFinishBroadcast> BombBroadcastCallback = new Callback<BombFinishBroadcast>() {
             @Override
             public void call(BombFinishBroadcast c) {
+                Diary.getInstance().setC3POTerminate(System.currentTimeMillis());
                 terminate();  //we need to check if its good
             }
         };
@@ -50,7 +52,8 @@ public class C3POMicroservice extends MicroService {
                     // TODO: change wait to sleep?? if yes, how?
 
                 }catch (InterruptedException e){}
-                //TODO  update diary?
+                Diary.getInstance().increaseTotalAttacks();
+                Diary.getInstance().setC3POFinish(System.currentTimeMillis());
             }
         };
         subscribeEvent(AttackEvent.class, attEventCallback);

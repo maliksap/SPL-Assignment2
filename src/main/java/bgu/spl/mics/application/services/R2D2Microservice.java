@@ -7,6 +7,7 @@ import bgu.spl.mics.application.messages.BombDestroyerEvent;
 import bgu.spl.mics.application.messages.BombFinishBroadcast;
 import bgu.spl.mics.application.messages.DeactivationEvent;
 import bgu.spl.mics.application.messages.DeactivationFinishBroadcast;
+import bgu.spl.mics.application.passiveObjects.Diary;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -35,6 +36,7 @@ public class R2D2Microservice extends MicroService {
         Callback<BombFinishBroadcast> BombBroadcastCallback = new Callback<BombFinishBroadcast>() {
             @Override
             public void call(BombFinishBroadcast c) {
+                Diary.getInstance().setR2D2Terminate(System.currentTimeMillis());
                 terminate();  //we need to check if its good
             }
         };
@@ -49,7 +51,7 @@ public class R2D2Microservice extends MicroService {
                     complete(c , true);
                     sendBroadcast(new DeactivationFinishBroadcast());
                 }catch (InterruptedException e){}
-                //TODO update diary?
+                Diary.getInstance().setR2D2Deactivate(System.currentTimeMillis());
             }
         };
         subscribeEvent(DeactivationEvent.class, deactCallback);

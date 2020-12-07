@@ -6,6 +6,7 @@ import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.messages.BombDestroyerEvent;
 import bgu.spl.mics.application.messages.BombFinishBroadcast;
+import bgu.spl.mics.application.passiveObjects.Diary;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -31,6 +32,7 @@ public class LandoMicroservice  extends MicroService {
         Callback<BombFinishBroadcast> BombBroadcastCallback = new Callback<BombFinishBroadcast>() {
             @Override
             public void call(BombFinishBroadcast c) {
+                Diary.getInstance().setLandoTerminate(System.currentTimeMillis());
                 terminate();  //we need to check if its good
             }
         };

@@ -7,6 +7,7 @@ import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.application.passiveObjects.Attack;
 
 import bgu.spl.mics.MicroService;
+import bgu.spl.mics.application.passiveObjects.Diary;
 
 /**
  * LeiaMicroservices Initialized with Attack objects, and sends them as  {@link AttackEvents}.
@@ -62,6 +63,7 @@ public class LeiaMicroservice extends MicroService {
         Callback<BombFinishBroadcast> BombBroadcastCallback = new Callback<BombFinishBroadcast>() {
             @Override
             public void call(BombFinishBroadcast c) {
+                Diary.getInstance().setLeiaTerminate(System.currentTimeMillis());
                 terminate();  //we need to check if its good
             }
         };
