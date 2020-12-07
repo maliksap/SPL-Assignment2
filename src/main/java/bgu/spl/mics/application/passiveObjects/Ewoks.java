@@ -32,7 +32,7 @@ public class Ewoks {
         return instance;
     }
 
-    private void setter(int n)
+    public void setter(int n)
     {
         for(int j=1 ; j<=n ; j++)
         {

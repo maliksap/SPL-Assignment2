@@ -9,6 +9,8 @@ import bgu.spl.mics.application.messages.BombDestroyerEvent;
 import bgu.spl.mics.application.messages.BombFinishBroadcast;
 import bgu.spl.mics.application.passiveObjects.Ewoks;
 
+import java.util.concurrent.CountDownLatch;
+
 
 /**
  * C3POMicroservices is in charge of the handling {@link AttackEvents}.
@@ -19,9 +21,11 @@ import bgu.spl.mics.application.passiveObjects.Ewoks;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class C3POMicroservice extends MicroService {
-	
-    public C3POMicroservice() {
+    private CountDownLatch countDownLatch;
+
+    public C3POMicroservice(CountDownLatch countDownLatch) {
         super("C3PO");
+        countDownLatch=countDownLatch;
     }
 
     @Override
@@ -50,5 +54,6 @@ public class C3POMicroservice extends MicroService {
             }
         };
         subscribeEvent(AttackEvent.class, attEventCallback);
+        countDownLatch.countDown();
     }
 }

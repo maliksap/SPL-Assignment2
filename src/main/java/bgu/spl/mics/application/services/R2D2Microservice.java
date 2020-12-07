@@ -8,6 +8,8 @@ import bgu.spl.mics.application.messages.BombFinishBroadcast;
 import bgu.spl.mics.application.messages.DeactivationEvent;
 import bgu.spl.mics.application.messages.DeactivationFinishBroadcast;
 
+import java.util.concurrent.CountDownLatch;
+
 /**
  * R2D2Microservices is in charge of the handling {@link DeactivationEvent}.
  * This class may not hold references for objects which it is not responsible for:
@@ -18,9 +20,13 @@ import bgu.spl.mics.application.messages.DeactivationFinishBroadcast;
  */
 public class R2D2Microservice extends MicroService {
     long duration;
-    public R2D2Microservice(long duration) {
+    private CountDownLatch countDownLatch;
+
+    public R2D2Microservice(long duration, CountDownLatch countDownLatch) {
         super("R2D2");
         duration=duration;
+        countDownLatch=countDownLatch;
+
     }
 
     @Override
@@ -48,5 +54,8 @@ public class R2D2Microservice extends MicroService {
         };
         subscribeEvent(DeactivationEvent.class, deactCallback);
         // TODO subscribe to relevant broadcasts
+
+        countDownLatch.countDown();
+
     }
 }
