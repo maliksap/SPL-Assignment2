@@ -37,6 +37,7 @@ public class R2D2Microservice extends MicroService {
             @Override
             public void call(BombFinishBroadcast c) {
                 Diary.getInstance().setR2D2Terminate(System.currentTimeMillis());
+                System.out.println("terminate r2d2 :" + System.currentTimeMillis());
                 terminate();  //we need to check if its good
             }
         };
@@ -47,8 +48,9 @@ public class R2D2Microservice extends MicroService {
             @Override
             public void call(DeactivationEvent c) {
                 try{
-//                    this.wait(duration); //sleep??????? -original do not change
+                    System.out.println("r2d2 goes to sleep:" + System.currentTimeMillis());
                     Thread.sleep(duration);  //sapir's change
+                    System.out.println("r2d2 wakes up:" + System.currentTimeMillis());
                     complete(c , true);
                     sendBroadcast(new DeactivationFinishBroadcast());
                 }catch (InterruptedException e){}

@@ -37,6 +37,7 @@ public class HanSoloMicroservice extends MicroService {
             @Override
             public void call(BombFinishBroadcast c) {
                 Diary.getInstance().setHanSoloTerminate(System.currentTimeMillis());
+                System.out.println("terminate han solo :" + System.currentTimeMillis());
                 terminate();  //we need to check if its good
             }
         };
@@ -48,11 +49,12 @@ public class HanSoloMicroservice extends MicroService {
                 try{
                     Ewoks.getInstance().acquireEwoks(att.getAttack().getSerials());
 //                  this.wait(att.getAttack().getDuration());           // original do not change
+                    System.out.println("han solo attack and go to sleep:" + System.currentTimeMillis());
                     Thread.sleep(att.getAttack().getDuration());        //sapir's change
+                    System.out.println("han solo wakes up:" + System.currentTimeMillis());
                     complete(att, true);
                     Ewoks.getInstance().releaseEwoks(att.getAttack().getSerials());
                     sendBroadcast(new AttackFinishBroadcast());
-                    // TODO: change wait to sleep?? if yes, how?
 
                 }catch (InterruptedException e){}
                 Diary.getInstance().increaseTotalAttacks();

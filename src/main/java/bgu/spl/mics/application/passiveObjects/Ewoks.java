@@ -41,17 +41,22 @@ public class Ewoks {
 //        }
 //    }
 
-    private static Ewoks instance = null;            //sapir-try with synchronize
+//    private static Ewoks instance = null;            //sapir-try with synchronize
+    private static class EwoksHolder{
+        private static Ewoks instance = new Ewoks();
+    }
+
     ConcurrentHashMap<Integer,Ewok> ewoksMap=new ConcurrentHashMap<Integer,Ewok>();
 
     private Ewoks() {
     }
 
     public static Ewoks getInstance() {
-        if(instance == null) {
-            instance = new Ewoks();
-        }
-        return instance;
+//        if(instance == null) {
+//            instance = new Ewoks();
+//        }
+//        return instance;
+        return Ewoks.EwoksHolder.instance;
     }
 
     public void setter(int n)
@@ -85,13 +90,14 @@ public class Ewoks {
     public boolean acquireEwoks(List<Integer> ewoksToAcquire) //sapir try with synchronize
     {
         Collections.sort(ewoksToAcquire);
+//        System.out.println(ewoksToAcquire.toString());
         for(int serial: ewoksToAcquire)
         {
             synchronized (ewoksMap.get(serial)){
                 while (!(ewoksMap.get(serial).isAvailable()))
                 {
                     try{
-                        wait();
+                        ewoksMap.get(serial).wait();
                     }
                     catch (InterruptedException e){
                     }
@@ -118,7 +124,8 @@ public class Ewoks {
         {
             synchronized (ewoksMap.get(serial)){
                 ewoksMap.get(serial).release();
-                notifyAll();
+                ewoksMap.get(serial).notifyAll();
+
             }
         }
     }

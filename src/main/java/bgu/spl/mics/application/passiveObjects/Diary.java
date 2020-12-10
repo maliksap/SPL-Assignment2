@@ -21,15 +21,19 @@ public class Diary {
     private long C3POTerminate;
     private long R2D2Terminate;
     private long LandoTerminate;
-    private static Diary instance = null;
+//    private static Diary instance = null;
+    private static class DiaryHolder{
+        private static Diary instance = new Diary();
+    }
 
     private Diary(){}
 
     public static Diary getInstance() {
-        if(instance == null) {
-            instance = new Diary();
-        }
-        return instance;
+//        if(instance == null) {
+//            instance = new Diary();
+//        }
+//        return instance;
+        return Diary.DiaryHolder.instance;
     }
 
     public AtomicInteger getTotalAttacks() {
@@ -108,7 +112,7 @@ public class Diary {
         LandoTerminate = landoTerminate;
     }
 
-    public static void setInstance(Diary instance) {
-        Diary.instance = instance;
-    }
+//    public static void setInstance(Diary instance) {
+//        Diary.instance = instance;
+//    }
 }

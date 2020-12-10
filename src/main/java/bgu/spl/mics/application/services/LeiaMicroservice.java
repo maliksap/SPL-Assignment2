@@ -47,7 +47,7 @@ public class LeiaMicroservice extends MicroService {
                         break;
                     }
                 }
-                if (!attacksDone)
+                if (attacksDone)
                     sendEvent(new DeactivationEvent());
             }
         };
@@ -64,6 +64,7 @@ public class LeiaMicroservice extends MicroService {
             @Override
             public void call(BombFinishBroadcast c) {
                 Diary.getInstance().setLeiaTerminate(System.currentTimeMillis());
+                System.out.println("terminate leia :" + System.currentTimeMillis());
                 terminate();  //we need to check if its good
             }
         };

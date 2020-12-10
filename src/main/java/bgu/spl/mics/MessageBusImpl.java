@@ -14,7 +14,10 @@ public class MessageBusImpl implements MessageBus {
 	ConcurrentHashMap<Class<? extends Message> , BlockingQueue<MicroService>> subEventQueues;
 	ConcurrentHashMap<Class<? extends Message>, BlockingQueue<MicroService>>  broadcastQueues ;
 	ConcurrentHashMap<Event,Future> futureEvents;
-	private static MessageBusImpl instance = null;
+//		private static MessageBusImpl instance = null;
+	private static class MsgBusHolder{
+		private static MessageBusImpl instance = new MessageBusImpl();
+	}
 
 	private MessageBusImpl()
 	{
@@ -26,30 +29,35 @@ public class MessageBusImpl implements MessageBus {
 
 
 	public static MessageBusImpl getInstance() {
-		if(instance == null) {
-			instance = new MessageBusImpl();
-		}
-		return instance;
+//		if(instance == null) {
+//			instance = new MessageBusImpl();
+//		}
+//		return instance;
+		return MsgBusHolder.instance;
 	}
 
 
 
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-		if (!subEventQueues.containsKey(type))
-		{
-			subEventQueues.put(type, new LinkedBlockingQueue<>());
-		}
+//		if (!subEventQueues.containsKey(type))
+//		{
+//			subEventQueues.put(type, new LinkedBlockingQueue<>());
+//		}
+		subEventQueues.putIfAbsent(type, new LinkedBlockingQueue<>());
 		subEventQueues.get(type).add(m);
 	}
 
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
-		if (!broadcastQueues.containsKey(type))
-		{
-			broadcastQueues.put(type, new LinkedBlockingQueue<>());
-		}
+//		if (!broadcastQueues.containsKey(type))
+//		{
+//			broadcastQueues.put(type, new LinkedBlockingQueue<>());
+//		}
+		broadcastQueues.putIfAbsent(type, new LinkedBlockingQueue<>());
 		broadcastQueues.get(type).add(m);
+		System.out.println("microservice: " + m.getName() +"	broadcastQueues type: " + type.getName() + "	broadcastQueues keys: " + broadcastQueues.get(type).size());
+
 	}
 
 	@Override @SuppressWarnings("unchecked")
@@ -124,11 +132,12 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public Message awaitMessage(MicroService m) throws InterruptedException {
+		System.out.println(m.getName() + " entered Awaitmassage");
 		Message ans;
 		try{
 //			System.out.println("microservice: " + m.getName() + "	microservicequeues keys: " + microServicesQueues.toString());
 			ans = microServicesQueues.get(m).take();
-//			System.out.println("microservice: " + m.getName() +"	recieved message: " + ans.toString());
+			System.out.println("microservice: " + m.getName() +"	recieved message: " + ans.toString());
 			return ans;
 		}
 		catch (InterruptedException e) {}

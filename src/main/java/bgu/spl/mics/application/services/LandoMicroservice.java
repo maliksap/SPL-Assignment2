@@ -33,6 +33,7 @@ public class LandoMicroservice  extends MicroService {
             @Override
             public void call(BombFinishBroadcast c) {
                 Diary.getInstance().setLandoTerminate(System.currentTimeMillis());
+                System.out.println("terminate lando :" + System.currentTimeMillis());
                 terminate();  //we need to check if its good
             }
         };
@@ -43,7 +44,10 @@ public class LandoMicroservice  extends MicroService {
             public void call(BombDestroyerEvent c) {
                 try{
 //                    this.wait(duration); //sleep??????? -original do not change
+                    System.out.println("lando go to sleep:" + System.currentTimeMillis());
                     Thread.sleep(duration);  //sapir's change
+                    System.out.println("lando wakes up:" + System.currentTimeMillis());
+
                     complete(c, true);
                     sendBroadcast(new BombFinishBroadcast());
                 }catch (InterruptedException e){}

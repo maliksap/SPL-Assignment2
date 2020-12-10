@@ -36,6 +36,7 @@ public class C3POMicroservice extends MicroService {
             @Override
             public void call(BombFinishBroadcast c) {
                 Diary.getInstance().setC3POTerminate(System.currentTimeMillis());
+                System.out.println("terminate c3po :" + System.currentTimeMillis());
                 terminate();  //we need to check if its good
             }
         };
@@ -47,7 +48,11 @@ public class C3POMicroservice extends MicroService {
                 try{
                     Ewoks.getInstance().acquireEwoks(att.getAttack().getSerials());
 //                    this.wait(att.getAttack().getDuration());           //original do not change
+                    System.out.println("c3po attack and go to sleep:" + System.currentTimeMillis());
+
                     Thread.sleep(att.getAttack().getDuration());        //sapir's change
+                    System.out.println("c3po wakes up:" + System.currentTimeMillis());
+
                     complete(att, true);
                     Ewoks.getInstance().releaseEwoks(att.getAttack().getSerials());
                     sendBroadcast(new AttackFinishBroadcast());

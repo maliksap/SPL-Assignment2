@@ -10,8 +10,10 @@ import bgu.spl.mics.application.Main;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.SQLOutput;
 import java.util.concurrent.CountDownLatch;
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -44,7 +46,9 @@ public class Main {
 			R2D2Microservice r2D2=new R2D2Microservice(in.getR2D2(),countDownLatch);
 			LandoMicroservice lando=new LandoMicroservice(in.getLando(),countDownLatch);
 
-			MessageBusImpl.getInstance();  // initialize messageBus before threads starts to run added by sapir
+//			MessageBusImpl.getInstance();  // initialize messageBus before threads starts to run added by sapir
+
+//			Diary.getInstance(); // initialize messageBus before threads starts to run
 
 			Thread Leia=new Thread(leia);
 			Thread C3PO=new Thread(c3PO);
@@ -76,14 +80,23 @@ public class Main {
 
 			Gson gsonOutput = new Gson();
 			gsonOutput.toJson("totalAttacks:" + (Diary.getInstance().getTotalAttacks()) );
+			System.out.println("totalAttacks:" + (Diary.getInstance().getTotalAttacks()) );
 			gsonOutput.toJson("HanSoloFinish:" + (Diary.getInstance().getHanSoloFinish()) );
+			System.out.println("HanSoloFinish:" + (Diary.getInstance().getHanSoloFinish()) );
 			gsonOutput.toJson("C3POFinish:" + (Diary.getInstance().getC3POFinish()) );
+			System.out.println("C3POFinish:" + (Diary.getInstance().getC3POFinish()) );
 			gsonOutput.toJson("R2D2Deactivate:" + (Diary.getInstance().getR2D2Deactivate()) );
+			System.out.println("R2D2Deactivate:" + (Diary.getInstance().getR2D2Deactivate()) );
 			gsonOutput.toJson("LeiaTerminate:" + (Diary.getInstance().getLeiaTerminate()) );
+			System.out.println("LeiaTerminate:" + (Diary.getInstance().getLeiaTerminate()) );
 			gsonOutput.toJson("HanSoloTerminate:" + (Diary.getInstance().getHanSoloTerminate()) );
+			System.out.println("HanSoloTerminate:" + (Diary.getInstance().getHanSoloTerminate()) );
 			gsonOutput.toJson("C3POTerminate:" + (Diary.getInstance().getC3POTerminate()) );
+			System.out.println("C3POTerminate:" + (Diary.getInstance().getC3POTerminate()) );
 			gsonOutput.toJson("R2D2Terminate:" + (Diary.getInstance().getR2D2Terminate()) );
+			System.out.println("R2D2Terminate:" + (Diary.getInstance().getR2D2Terminate()) );
 			gsonOutput.toJson("LandoTerminate:" + (Diary.getInstance().getLandoTerminate()) );
+			System.out.println("LandoTerminate:" + (Diary.getInstance().getLandoTerminate()) );
 			try {
 				FileWriter file = new FileWriter("output.json");
 				file.write(gson.toString());
