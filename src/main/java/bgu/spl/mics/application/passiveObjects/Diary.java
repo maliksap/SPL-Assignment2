@@ -115,4 +115,5 @@ public class Diary {
 //    public static void setInstance(Diary instance) {
 //        Diary.instance = instance;
 //    }
+
 }
