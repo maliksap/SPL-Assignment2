@@ -48,6 +48,10 @@ public class Diary {
         }while(!(totalAttacks.compareAndSet(old,old+1)));
     }
 
+    public void resetNumberAttacks(){
+        totalAttacks.set(0);
+    }
+
     public long getHanSoloFinish() {
         return HanSoloFinish;
     }
@@ -115,5 +119,7 @@ public class Diary {
 //    public static void setInstance(Diary instance) {
 //        Diary.instance = instance;
 //    }
+
+
 
 }

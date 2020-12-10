@@ -31,7 +31,10 @@ public class Main {
 			Gson gson = new Gson();
 
 			// create a reader
-			Reader reader = Files.newBufferedReader(Paths.get(args[0]));
+//			Reader reader = Files.newBufferedReader(Paths.get(args[0]));
+			Reader reader = new FileReader( "input.json"); // do not forget to change back
+
+//
 
 			// convert JSON string to User object
 			Input in = gson.fromJson(reader, Input.class);
@@ -56,11 +59,14 @@ public class Main {
 			Thread R2D2=new Thread(r2D2);
 			Thread Lando=new Thread(lando);
 
+			//we can delete this lines (just for debug):
 			Leia.setName("Leia-Thread");
 			C3PO.setName("C3PO-Thread");
 			HanSolo.setName("HanSolo-Thread");
 			R2D2.setName("R2D2-Thread");
 			Lando.setName("Lando-Thread");
+
+
 
 			C3PO.start();
 			HanSolo.start();
@@ -78,36 +84,49 @@ public class Main {
 			R2D2.join();
 			Lando.join();
 
-			Gson gsonOutput = new Gson();
-			gsonOutput.toJson("totalAttacks:" + (Diary.getInstance().getTotalAttacks()) );
-			System.out.println("totalAttacks:" + (Diary.getInstance().getTotalAttacks()) );
-			gsonOutput.toJson("HanSoloFinish:" + (Diary.getInstance().getHanSoloFinish()) );
-			System.out.println("HanSoloFinish:" + (Diary.getInstance().getHanSoloFinish()) );
-			gsonOutput.toJson("C3POFinish:" + (Diary.getInstance().getC3POFinish()) );
-			System.out.println("C3POFinish:" + (Diary.getInstance().getC3POFinish()) );
-			gsonOutput.toJson("R2D2Deactivate:" + (Diary.getInstance().getR2D2Deactivate()) );
-			System.out.println("R2D2Deactivate:" + (Diary.getInstance().getR2D2Deactivate()) );
-			gsonOutput.toJson("LeiaTerminate:" + (Diary.getInstance().getLeiaTerminate()) );
-			System.out.println("LeiaTerminate:" + (Diary.getInstance().getLeiaTerminate()) );
-			gsonOutput.toJson("HanSoloTerminate:" + (Diary.getInstance().getHanSoloTerminate()) );
-			System.out.println("HanSoloTerminate:" + (Diary.getInstance().getHanSoloTerminate()) );
-			gsonOutput.toJson("C3POTerminate:" + (Diary.getInstance().getC3POTerminate()) );
-			System.out.println("C3POTerminate:" + (Diary.getInstance().getC3POTerminate()) );
-			gsonOutput.toJson("R2D2Terminate:" + (Diary.getInstance().getR2D2Terminate()) );
-			System.out.println("R2D2Terminate:" + (Diary.getInstance().getR2D2Terminate()) );
-			gsonOutput.toJson("LandoTerminate:" + (Diary.getInstance().getLandoTerminate()) );
-			System.out.println("LandoTerminate:" + (Diary.getInstance().getLandoTerminate()) );
-			try {
-				FileWriter file = new FileWriter("output.json");
-				file.write(gson.toString());
-				file.close();
-			} catch (IOException e) {
-				System.out.println("JSON file created: " +gson);
-			}
+//			Gson gsonOutput = new Gson();
+//			gsonOutput.toJson("totalAttacks:" + (Diary.getInstance().getTotalAttacks()) );
+//			System.out.println("totalAttacks:" + (Diary.getInstance().getTotalAttacks()) );
+////			gsonOutput.toJson("HanSoloFinish:" + (Diary.getInstance().getHanSoloFinish()) );
+//			System.out.println("HanSoloFinish:" + (Diary.getInstance().getHanSoloFinish()) );
+////			gsonOutput.toJson("C3POFinish:" + (Diary.getInstance().getC3POFinish()) );
+//			System.out.println("C3POFinish:" + (Diary.getInstance().getC3POFinish()) );
+////			gsonOutput.toJson("R2D2Deactivate:" + (Diary.getInstance().getR2D2Deactivate()) );
+//			System.out.println("R2D2Deactivate:" + (Diary.getInstance().getR2D2Deactivate()) );
+////			gsonOutput.toJson("LeiaTerminate:" + (Diary.getInstance().getLeiaTerminate()) );
+//			System.out.println("LeiaTerminate:" + (Diary.getInstance().getLeiaTerminate()) );
+////			gsonOutput.toJson("HanSoloTerminate:" + (Diary.getInstance().getHanSoloTerminate()) );
+//			System.out.println("HanSoloTerminate:" + (Diary.getInstance().getHanSoloTerminate()) );
+////			gsonOutput.toJson("C3POTerminate:" + (Diary.getInstance().getC3POTerminate()) );
+//			System.out.println("C3POTerminate:" + (Diary.getInstance().getC3POTerminate()) );
+////			gsonOutput.toJson("R2D2Terminate:" + (Diary.getInstance().getR2D2Terminate()) );
+//			System.out.println("R2D2Terminate:" + (Diary.getInstance().getR2D2Terminate()) );
+////			gsonOutput.toJson("LandoTerminate:" + (Diary.getInstance().getLandoTerminate()) );
+//			System.out.println("LandoTerminate:" + (Diary.getInstance().getLandoTerminate()) );
+
+
+			// create Gson instance
+			Gson gson1 = new Gson();
+
+			// create a writer
+//			Writer writer = Files.newBufferedWriter(Paths.get(args[1]));
+			Writer writer = new FileWriter("output.json"); // do not forget to change
+
+			// convert book object to JSON file
+			gson1.toJson(Diary.getInstance() , writer);
+
+			// close writer
+			writer.close();
+
+//			System.out.println("JSON file created: " +gson1.toString());
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+
+
+
+
 	}
 
 }

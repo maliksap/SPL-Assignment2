@@ -56,7 +56,7 @@ public class MessageBusImpl implements MessageBus {
 //		}
 		broadcastQueues.putIfAbsent(type, new LinkedBlockingQueue<>());
 		broadcastQueues.get(type).add(m);
-		System.out.println("microservice: " + m.getName() +"	broadcastQueues type: " + type.getName() + "	broadcastQueues keys: " + broadcastQueues.get(type).size());
+//		System.out.println("microservice: " + m.getName() +"	broadcastQueues type: " + type.getName() + "	broadcastQueues keys: " + broadcastQueues.get(type).size());
 
 	}
 
@@ -74,21 +74,30 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void sendBroadcast(Broadcast b) {
-		for (MicroService m: broadcastQueues.get(b.getClass()))
-		{
-			microServicesQueues.get(m).add(b);
+		if (broadcastQueues.containsKey(b.getClass())) {
+			if (!broadcastQueues.get(b.getClass()).isEmpty()) {
+				for (MicroService m : broadcastQueues.get(b.getClass())) {
+//					System.out.println("microservice: " + m.getName() + "	microservicequeues keys: " + microServicesQueues.size());
+					microServicesQueues.get(m).add(b);
+				}
+			}
 		}
 	}
 
 
 	@Override
-	public <T> Future<T> sendEvent(Event<T> e) {
+	public synchronized  <T> Future<T> sendEvent(Event<T> e) {  //Todo: add synchronize (or not?)
 		Future<T> ans = new Future<>();
-		MicroService m = subEventQueues.get(e.getClass()).remove();
-		microServicesQueues.get(m).add(e);
-		subEventQueues.get(e.getClass()).add(m);
-		futureEvents.put(e, ans);
-		return ans;
+		if (subEventQueues.containsKey(e.getClass())){
+			if(!subEventQueues.get(e.getClass()).isEmpty()) {
+				MicroService m = subEventQueues.get(e.getClass()).remove();
+				microServicesQueues.get(m).add(e);
+				subEventQueues.get(e.getClass()).add(m);
+				futureEvents.put(e, ans);
+				return ans;
+			}
+		}
+		return null;
 
 //		if(subEventQueues.get(e.getClass()).isEmpty()){
 //			ans.resolve(null);
@@ -132,12 +141,12 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public Message awaitMessage(MicroService m) throws InterruptedException {
-		System.out.println(m.getName() + " entered Awaitmassage");
+//		System.out.println(m.getName() + " entered Awaitmassage");
 		Message ans;
 		try{
-//			System.out.println("microservice: " + m.getName() + "	microservicequeues keys: " + microServicesQueues.toString());
+//			System.out.println("await massage microservice: " + m.getName() + "	microservicequeues keys: " + microServicesQueues.size());
 			ans = microServicesQueues.get(m).take();
-			System.out.println("microservice: " + m.getName() +"	recieved message: " + ans.toString());
+//			System.out.println("microservice: " + m.getName() +"	recieved message: " + ans.toString());
 			return ans;
 		}
 		catch (InterruptedException e) {}
