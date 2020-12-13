@@ -7,6 +7,8 @@ import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.messages.BombDestroyerEvent;
 import bgu.spl.mics.application.messages.BombFinishBroadcast;
 import bgu.spl.mics.application.passiveObjects.Diary;
+import bgu.spl.mics.application.Main;
+
 
 import java.util.concurrent.CountDownLatch;
 
@@ -17,17 +19,22 @@ import java.util.concurrent.CountDownLatch;
  */
 public class LandoMicroservice  extends MicroService {
     long duration;
-    private CountDownLatch countDownLatch;
+//    private CountDownLatch countDownLatch;
 
-    public LandoMicroservice(long duration, CountDownLatch countDownLatch) {
+//    public LandoMicroservice(long duration, CountDownLatch countDownLatch) {
+//        super("Lando");
+//        this.duration=duration;
+//        this.countDownLatch=countDownLatch;
+//    }
+
+    public LandoMicroservice(long duration) {
         super("Lando");
         this.duration=duration;
-        this.countDownLatch=countDownLatch;
     }
 
     @Override
     protected void initialize() {
-        MessageBusImpl.getInstance().register(this);
+//        MessageBusImpl.getInstance().register(this);
 
         Callback<BombFinishBroadcast> BombBroadcastCallback = new Callback<BombFinishBroadcast>() {
             @Override
@@ -55,8 +62,7 @@ public class LandoMicroservice  extends MicroService {
         };
         subscribeEvent(BombDestroyerEvent.class, bombEventCallback);
 
-        countDownLatch.countDown();
-
+        Main.getCountDownLatch().countDown();
     }
 }
 

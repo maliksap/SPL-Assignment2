@@ -29,17 +29,26 @@ public class Future<T> {
      * @return return the result of type T if it is available, if not wait until it is available.
      * 	       
      */
-	public T get() {
-
-        return result;
+	public synchronized T get() {
+		if(isDone())
+			return result;
+		else{
+			synchronized (this){
+				try{
+					this.wait();
+				}catch (InterruptedException e){}
+			}
+			return result;
+		}
 	}
 	
 	/**
      * Resolves the result of this Future object.
      */
-	public void resolve (T result) {
+	public synchronized void resolve (T result) {
 		this.result=result;
 		isDone=true;
+		notifyAll();
 	}
 	
 	/**
@@ -61,8 +70,15 @@ public class Future<T> {
      *         elapsed, return null.
      */
 	public T get(long timeout, TimeUnit unit) {
-		
-        return result;
+		if(isDone())
+			return result;
+		else{
+			synchronized (this){
+				try{
+					this.wait(unit.convert(timeout, TimeUnit.MILLISECONDS));
+				}catch (InterruptedException e){}
+			}
+			return result;
+		}
 	}
-
 }

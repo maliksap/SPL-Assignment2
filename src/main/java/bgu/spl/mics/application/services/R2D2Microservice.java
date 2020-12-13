@@ -8,6 +8,8 @@ import bgu.spl.mics.application.messages.BombFinishBroadcast;
 import bgu.spl.mics.application.messages.DeactivationEvent;
 import bgu.spl.mics.application.messages.DeactivationFinishBroadcast;
 import bgu.spl.mics.application.passiveObjects.Diary;
+import bgu.spl.mics.application.Main;
+
 
 import java.util.concurrent.CountDownLatch;
 
@@ -21,18 +23,22 @@ import java.util.concurrent.CountDownLatch;
  */
 public class R2D2Microservice extends MicroService {
     long duration;
-    private CountDownLatch countDownLatch;
+//    private CountDownLatch countDownLatch;
 
-    public R2D2Microservice(long duration, CountDownLatch countDownLatch) {
+//    public R2D2Microservice(long duration, CountDownLatch countDownLatch) {
+//        super("R2D2");
+//        this.duration=duration;
+//        this.countDownLatch=countDownLatch;
+//    }
+
+    public R2D2Microservice(long duration) {
         super("R2D2");
         this.duration=duration;
-        this.countDownLatch=countDownLatch;
-
     }
 
     @Override
     protected void initialize() {
-        MessageBusImpl.getInstance().register(this);
+//        MessageBusImpl.getInstance().register(this);
         Callback<BombFinishBroadcast> BombBroadcastCallback = new Callback<BombFinishBroadcast>() {
             @Override
             public void call(BombFinishBroadcast c) {
@@ -59,7 +65,6 @@ public class R2D2Microservice extends MicroService {
         };
         subscribeEvent(DeactivationEvent.class, deactCallback);
 
-        countDownLatch.countDown();
-
+        Main.getCountDownLatch().countDown();
     }
 }

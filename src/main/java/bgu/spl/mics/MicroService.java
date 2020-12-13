@@ -60,6 +60,7 @@ public abstract class MicroService implements Runnable {
      *                 queue.
      */
     protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
+        MessageBusImpl.getInstance().register(this);
     	actionMap.putIfAbsent(type,callback);
         String s = type.getName();
 
@@ -87,6 +88,7 @@ public abstract class MicroService implements Runnable {
      *                 queue.
      */
     protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {
+        MessageBusImpl.getInstance().register(this);
         actionMap.putIfAbsent(type,callback);
         MessageBusImpl.getInstance().subscribeBroadcast(type,this);
     }

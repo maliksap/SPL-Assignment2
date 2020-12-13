@@ -25,7 +25,13 @@ import org.w3c.dom.ls.LSOutput;
  * In the end, you should output a JSON.
  */
 public class Main {
+	public static CountDownLatch getCountDownLatch() {
+		return countDownLatch;
+	}
+
+	private static CountDownLatch countDownLatch;
 	public static void main(String[] args) {
+		 countDownLatch = new CountDownLatch(4);
 		try {
 			// create Gson instance
 			Gson gson = new Gson();
@@ -41,13 +47,12 @@ public class Main {
 
 			Ewoks.getInstance().setter(in.getEwoks());
 
-			CountDownLatch countDownLatch = new CountDownLatch(4);
 
 			LeiaMicroservice leia=new LeiaMicroservice(in.getAttacks());
-			C3POMicroservice c3PO=new C3POMicroservice(countDownLatch);
-			HanSoloMicroservice hanSolo=new HanSoloMicroservice(countDownLatch);
-			R2D2Microservice r2D2=new R2D2Microservice(in.getR2D2(),countDownLatch);
-			LandoMicroservice lando=new LandoMicroservice(in.getLando(),countDownLatch);
+			C3POMicroservice c3PO=new C3POMicroservice();
+			HanSoloMicroservice hanSolo=new HanSoloMicroservice();
+			R2D2Microservice r2D2=new R2D2Microservice(in.getR2D2());
+			LandoMicroservice lando=new LandoMicroservice(in.getLando());
 
 //			MessageBusImpl.getInstance();  // initialize messageBus before threads starts to run added by sapir
 

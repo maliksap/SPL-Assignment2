@@ -36,7 +36,8 @@ public class LeiaMicroservice extends MicroService {
 
     @Override
     protected void initialize() {
-        MessageBusImpl.getInstance().register(this);
+
+//        MessageBusImpl.getInstance().register(this);
         Callback<AttackFinishBroadcast> AttBroadcastCallback = new Callback<AttackFinishBroadcast>() {
             @Override
             public void call(AttackFinishBroadcast c) {
@@ -73,7 +74,7 @@ public class LeiaMicroservice extends MicroService {
 
 
 //        try{
-//        wait(600);
+//            Thread.sleep(300);
 //        }catch (InterruptedException e){}
 
         for (int i = 0 ; i<eventsFollowUp.length ; i++){

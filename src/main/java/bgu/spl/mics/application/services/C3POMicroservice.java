@@ -9,6 +9,7 @@ import bgu.spl.mics.application.messages.BombDestroyerEvent;
 import bgu.spl.mics.application.messages.BombFinishBroadcast;
 import bgu.spl.mics.application.passiveObjects.Diary;
 import bgu.spl.mics.application.passiveObjects.Ewoks;
+import bgu.spl.mics.application.Main;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -22,16 +23,20 @@ import java.util.concurrent.CountDownLatch;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class C3POMicroservice extends MicroService {
-    private CountDownLatch countDownLatch;
+//    private CountDownLatch countDownLatch;
 
-    public C3POMicroservice(CountDownLatch countDownLatch) {
+//    public C3POMicroservice(CountDownLatch countDownLatch) {
+//        super("C3PO");
+//        this.countDownLatch=countDownLatch;
+//    }
+
+    public C3POMicroservice() {
         super("C3PO");
-        this.countDownLatch=countDownLatch;
     }
 
     @Override
     protected void initialize() {
-        MessageBusImpl.getInstance().register(this);
+//        MessageBusImpl.getInstance().register(this);
         Callback<BombFinishBroadcast> BombBroadcastCallback = new Callback<BombFinishBroadcast>() {
             @Override
             public void call(BombFinishBroadcast c) {
@@ -63,6 +68,6 @@ public class C3POMicroservice extends MicroService {
             }
         };
         subscribeEvent(AttackEvent.class, attEventCallback);
-        countDownLatch.countDown();
+        Main.getCountDownLatch().countDown();
     }
 }

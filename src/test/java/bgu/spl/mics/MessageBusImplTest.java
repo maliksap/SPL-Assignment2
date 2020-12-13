@@ -26,7 +26,7 @@ class MessageBusImplTest {
     @BeforeEach
     void setUp() {
         mBus = MessageBusImpl.getInstance();
-        C3PO= new C3POMicroservice(countDownLatch);
+        C3PO= new C3POMicroservice();
         attEvent=new AttackEvent(attack);
         b=new AttackFinishBroadcast(); //change to Attbroadcast
     }

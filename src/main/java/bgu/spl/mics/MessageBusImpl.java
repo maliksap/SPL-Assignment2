@@ -45,8 +45,11 @@ public class MessageBusImpl implements MessageBus {
 //			subEventQueues.put(type, new LinkedBlockingQueue<>());
 //		}
 		subEventQueues.putIfAbsent(type, new LinkedBlockingQueue<>());
-		subEventQueues.get(type).add(m);
+//		synchronized (subEventQueues.get(type)){
+
+					subEventQueues.get(type).add(m);
 	}
+//	}
 
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
@@ -55,10 +58,14 @@ public class MessageBusImpl implements MessageBus {
 //			broadcastQueues.put(type, new LinkedBlockingQueue<>());
 //		}
 		broadcastQueues.putIfAbsent(type, new LinkedBlockingQueue<>());
-		broadcastQueues.get(type).add(m);
+//		synchronized (broadcastQueues.get(type)){
+
+			broadcastQueues.get(type).add(m);
+		}
+
 //		System.out.println("microservice: " + m.getName() +"	broadcastQueues type: " + type.getName() + "	broadcastQueues keys: " + broadcastQueues.get(type).size());
 
-	}
+//	}
 
 	@Override @SuppressWarnings("unchecked")
 	public <T> void complete(Event<T> e, T result) {
@@ -75,28 +82,40 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public void sendBroadcast(Broadcast b) {
 		if (broadcastQueues.containsKey(b.getClass())) {
-			if (!broadcastQueues.get(b.getClass()).isEmpty()) {
-				for (MicroService m : broadcastQueues.get(b.getClass())) {
+//			synchronized (broadcastQueues.get(b.getClass())) {
+				if (!broadcastQueues.get(b.getClass()).isEmpty()) {
+					for (MicroService m : broadcastQueues.get(b.getClass())) {
+//						synchronized (microServicesQueues.get(m)) {
 //					System.out.println("microservice: " + m.getName() + "	microservicequeues keys: " + microServicesQueues.size());
-					microServicesQueues.get(m).add(b);
+							microServicesQueues.get(m).add(b);
+//							microServicesQueues.get(m).notifyAll();
+
+						}
+					}
 				}
 			}
-		}
-	}
+//		}
+//	}
 
 
 	@Override
 	public synchronized  <T> Future<T> sendEvent(Event<T> e) {  //Todo: add synchronize (or not?)
 		Future<T> ans = new Future<>();
-		if (subEventQueues.containsKey(e.getClass())){
-			if(!subEventQueues.get(e.getClass()).isEmpty()) {
-				MicroService m = subEventQueues.get(e.getClass()).remove();
-				microServicesQueues.get(m).add(e);
-				subEventQueues.get(e.getClass()).add(m);
-				futureEvents.put(e, ans);
-				return ans;
-			}
-		}
+		futureEvents.put(e, ans);
+		if (subEventQueues.containsKey(e.getClass())) {
+//			synchronized (subEventQueues.get(e.getClass())) {
+				if (!subEventQueues.get(e.getClass()).isEmpty()) {
+					MicroService m = subEventQueues.get(e.getClass()).remove();
+//					synchronized (microServicesQueues.get(m)) {
+						microServicesQueues.get(m).add(e);
+						subEventQueues.get(e.getClass()).add(m);
+
+//						microServicesQueues.get(m).notifyAll();
+						return ans;
+					}
+				}
+//			}
+//		}
 		return null;
 
 //		if(subEventQueues.get(e.getClass()).isEmpty()){
@@ -122,7 +141,7 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	  public void register(MicroService m) {
 		microServicesQueues.putIfAbsent(m, new LinkedBlockingQueue<Message>());//can we assume valid input? or do we need to make sure that m is not already registered?
-		System.out.println("microservice: " + m.getName() + "	microservicequeues keys: " + microServicesQueues.size());
+//		System.out.println("microservice: " + m.getName() + "	microservicequeues keys: " + microServicesQueues.size());
 
 	}
 
@@ -143,14 +162,19 @@ public class MessageBusImpl implements MessageBus {
 	public Message awaitMessage(MicroService m) throws InterruptedException {
 //		System.out.println(m.getName() + " entered Awaitmassage");
 		Message ans;
-		try{
+//			synchronized (microServicesQueues.get(m)) {
+				try {
+//					if (microServicesQueues.get(m).isEmpty()) {
+//						microServicesQueues.get(m).wait();
+//					}
+					return microServicesQueues.get(m).take();
 //			System.out.println("await massage microservice: " + m.getName() + "	microservicequeues keys: " + microServicesQueues.size());
-			ans = microServicesQueues.get(m).take();
+//				ans = microServicesQueues.get(m).take();
 //			System.out.println("microservice: " + m.getName() +"	recieved message: " + ans.toString());
-			return ans;
-		}
-		catch (InterruptedException e) {}
-
+//				return ans;
+				} catch (InterruptedException e) {
+//				}
+			}
 		return null;
 	}
 }
