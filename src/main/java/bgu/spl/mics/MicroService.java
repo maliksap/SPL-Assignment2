@@ -1,9 +1,7 @@
 package bgu.spl.mics;
 
-import bgu.spl.mics.application.messages.BombFinishBroadcast;
 
 import java.util.HashMap;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * The MicroService is an abstract class that any micro-service in the system
@@ -19,9 +17,6 @@ import java.util.concurrent.CountDownLatch;
  * message-queue (see {@link MessageBus#register(bgu.spl.mics.MicroService)}
  * method). The abstract MicroService stores this callback together with the
  * type of the message is related to.
- * 
- * Only private fields and methods may be added to this class.
- * <p>
  */
 public abstract class MicroService implements Runnable {
     private String myName;
@@ -40,10 +35,11 @@ public abstract class MicroService implements Runnable {
 
     /**
      * Subscribes to events of type {@code type} with the callback
-     * {@code callback}. This means two things:
-     * 1. Subscribe to events in the singleton event-bus using the supplied
+     * {@code callback}. This means three things:
+     * 1. if the microservice has not already registered to the bus it will register.
+     * 2. Subscribe to events in the singleton event-bus using the supplied
      * {@code type}
-     * 2. Store the {@code callback} so that when events of type {@code type}
+     * 3. Store the {@code callback} so that when events of type {@code type}
      * are received it will be called.
      * <p>
      * For a received message {@code m} of type {@code type = m.getClass()}
@@ -69,10 +65,11 @@ public abstract class MicroService implements Runnable {
 
     /**
      * Subscribes to broadcast message of type {@code type} with the callback
-     * {@code callback}. This means two things:
-     * 1. Subscribe to broadcast messages in the singleton event-bus using the
+     * {@code callback}. This means three things:
+     * 1. if the microservice has not already registered to the bus it will register.
+     * 2. Subscribe to broadcast messages in the singleton event-bus using the
      * supplied {@code type}
-     * 2. Store the {@code callback} so that when broadcast messages of type
+     * 3. Store the {@code callback} so that when broadcast messages of type
      * {@code type} received it will be called.
      * <p>
      * For a received message {@code m} of type {@code type = m.getClass()}
@@ -155,8 +152,7 @@ public abstract class MicroService implements Runnable {
     }
 
     /**
-     * The entry point of the micro-service. TODO: you must complete this code
-     * otherwise you will end up in an infinite loop.
+     * The entry point of the micro-service.
      */
     @Override
     public final void run() {

@@ -2,7 +2,6 @@ package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.Callback;
 import bgu.spl.mics.Future;
-import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.application.passiveObjects.Attack;
 
@@ -10,12 +9,9 @@ import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.passiveObjects.Diary;
 
 /**
- * LeiaMicroservices Initialized with Attack objects, and sends them as  {@link AttackEvents}.
- * This class may not hold references for objects which it is not responsible for:
- * {@link AttackEvents}.
- *
- * You can add private fields and public methods to this class.
- * You MAY change constructor signatures and even add new public constructors.
+ * LeiaMicroservices Initialized with Attack objects, and sends them as {@link AttackEvent}.
+ * Leia is in charge of sending {@link DeactivationEvent} when all {@link AttackEvent} are handled, and
+ * also in charge of sending {@link BombDestroyerEvent} when {@link DeactivationEvent} is completed.
  */
 public class LeiaMicroservice extends MicroService {
 	final Attack[] attacks;
@@ -26,19 +22,18 @@ public class LeiaMicroservice extends MicroService {
         super("Leia");
 		this.attacks = attacks;
 		eventsFollowUp = new Future[attacks.length];
-
-//		int counter=1;
-//		for(int i=0; i<attacks.length; i++){
-//		    AttackEvent counter = new AttackEvent(attacks[i]);
-//		    eventFollowUp.put(new)
-//        }
     }
 
+    /**
+     * Subscribe the microservice to the messages that are of it's interest
+     * and send all {@link AttackEvent}.
+     */
     @Override
     protected void initialize() {
-
-//        MessageBusImpl.getInstance().register(this);
         Callback<AttackFinishBroadcast> AttBroadcastCallback = new Callback<AttackFinishBroadcast>() {
+            /**
+             * A callback that defines instructions for microservice to handle an {@link AttackFinishBroadcast}.
+             */
             @Override
             public void call(AttackFinishBroadcast c) {
                 boolean attacksDone = true;
@@ -54,6 +49,9 @@ public class LeiaMicroservice extends MicroService {
         };
         subscribeBroadcast(AttackFinishBroadcast.class ,AttBroadcastCallback );
         Callback<DeactivationFinishBroadcast> DecBroadcastCallback = new Callback<DeactivationFinishBroadcast>() {
+            /**
+             * A callback that defines instructions for microservice to handle a {@link DeactivationFinishBroadcast}.
+             */
             @Override
             public void call(DeactivationFinishBroadcast c) {
                 sendEvent(new BombDestroyerEvent());
@@ -62,20 +60,16 @@ public class LeiaMicroservice extends MicroService {
         subscribeBroadcast(DeactivationFinishBroadcast.class, DecBroadcastCallback);
 
         Callback<BombFinishBroadcast> BombBroadcastCallback = new Callback<BombFinishBroadcast>() {
+            /**
+             * A callback that defines instructions for microservice to handle a {@link BombFinishBroadcast}.
+             */
             @Override
             public void call(BombFinishBroadcast c) {
                 Diary.getInstance().setLeiaTerminate(System.currentTimeMillis());
-                System.out.println("terminate leia :" + System.currentTimeMillis());
-                terminate();  //we need to check if its good
+                terminate();
             }
         };
-
         subscribeBroadcast(BombFinishBroadcast.class, BombBroadcastCallback);
-
-
-//        try{
-//            Thread.sleep(300);
-//        }catch (InterruptedException e){}
 
         for (int i = 0 ; i<eventsFollowUp.length ; i++){
             eventsFollowUp[i] = sendEvent(new AttackEvent(attacks[i]));

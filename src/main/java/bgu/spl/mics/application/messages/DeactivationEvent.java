@@ -1,6 +1,9 @@
 package bgu.spl.mics.application.messages;
 import bgu.spl.mics.Event;
-import bgu.spl.mics.Future;
+
+/**
+ * A message that represents a Deactivation of the shield to be performed.
+ */
 
 public class DeactivationEvent implements Event<Boolean> {
 

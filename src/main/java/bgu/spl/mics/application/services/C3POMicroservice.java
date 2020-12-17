@@ -1,62 +1,52 @@
 package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.Callback;
-import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.messages.AttackFinishBroadcast;
-import bgu.spl.mics.application.messages.BombDestroyerEvent;
 import bgu.spl.mics.application.messages.BombFinishBroadcast;
 import bgu.spl.mics.application.passiveObjects.Diary;
 import bgu.spl.mics.application.passiveObjects.Ewoks;
 import bgu.spl.mics.application.Main;
 
-import java.util.concurrent.CountDownLatch;
-
 
 /**
- * C3POMicroservices is in charge of the handling {@link AttackEvents}.
- * This class may not hold references for objects which it is not responsible for:
- * {@link AttackEvents}.
- *
- * You can add private fields and public methods to this class.
- * You MAY change constructor signatures and even add new public constructors.
+ * C3POMicroservices is in charge of the handling {@link AttackEvent}.
  */
 public class C3POMicroservice extends MicroService {
-//    private CountDownLatch countDownLatch;
-
-//    public C3POMicroservice(CountDownLatch countDownLatch) {
-//        super("C3PO");
-//        this.countDownLatch=countDownLatch;
-//    }
 
     public C3POMicroservice() {
         super("C3PO");
     }
 
+    /**
+     * Subscribe the microservice to the messages that are of it's interest
+     */
+
     @Override
     protected void initialize() {
-//        MessageBusImpl.getInstance().register(this);
         Callback<BombFinishBroadcast> BombBroadcastCallback = new Callback<BombFinishBroadcast>() {
+            /**
+             * A callback that defines instructions for microservice to handle a {@link BombFinishBroadcast}.
+             */
             @Override
             public void call(BombFinishBroadcast c) {
                 Diary.getInstance().setC3POTerminate(System.currentTimeMillis());
-                System.out.println("terminate c3po :" + System.currentTimeMillis());
-                terminate();  //we need to check if its good
+                terminate();
             }
         };
         subscribeBroadcast(BombFinishBroadcast.class, BombBroadcastCallback);
 
         Callback<AttackEvent> attEventCallback=new Callback<AttackEvent>() {
+            /**
+             * A callback that defines instructions for microservice to handle an {@link AttackEvent}.
+             */
             @Override
-            public void call(AttackEvent att) { //attEvent
+            public void call(AttackEvent att) {
                 try{
                     Ewoks.getInstance().acquireEwoks(att.getAttack().getSerials());
-//                    this.wait(att.getAttack().getDuration());           //original do not change
-                    System.out.println("c3po attack and go to sleep:" + System.currentTimeMillis());
 
-                    Thread.sleep(att.getAttack().getDuration());        //sapir's change
-                    System.out.println("c3po wakes up:" + System.currentTimeMillis());
+                    Thread.sleep(att.getAttack().getDuration());
 
                     complete(att, true);
                     Ewoks.getInstance().releaseEwoks(att.getAttack().getSerials());

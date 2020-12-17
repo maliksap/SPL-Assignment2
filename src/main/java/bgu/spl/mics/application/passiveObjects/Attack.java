@@ -5,9 +5,6 @@ import java.util.List;
 
 /**
  * Passive data-object representing an attack object.
- * You must not alter any of the given public methods of this class.
- * <p>
- * YDo not add any additional members/method to this class (except for getters).
  */
 public class Attack {
     final List<Integer> serials;
@@ -21,12 +18,10 @@ public class Attack {
         this.duration = duration;
     }
 
-    //getter we added
     public int getDuration() {
         return duration;
     }
 
-    //getter we added
     public List<Integer> getSerials() {
         return serials;
     }

@@ -7,9 +7,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Passive data-object representing a Diary - in which the flow of the battle is recorded.
- * We are going to compare your recordings with the expected recordings, and make sure that your output makes sense.
- * <p>
- * Do not add to this class nothing but a single constructor, getters and setters.
  */
 public class Diary {
     private AtomicInteger totalAttacks = new AtomicInteger(0);
@@ -21,7 +18,7 @@ public class Diary {
     private long C3POTerminate;
     private long R2D2Terminate;
     private long LandoTerminate;
-//    private static Diary instance = null;
+
     private static class DiaryHolder{
         private static Diary instance = new Diary();
     }
@@ -29,10 +26,6 @@ public class Diary {
     private Diary(){}
 
     public static Diary getInstance() {
-//        if(instance == null) {
-//            instance = new Diary();
-//        }
-//        return instance;
         return Diary.DiaryHolder.instance;
     }
 
@@ -40,9 +33,11 @@ public class Diary {
         return totalAttacks;
     }
 
+    /**
+     * Safely increase number of attacks handled
+     */
     public void increaseTotalAttacks() {
         int old ;
-
         do {
             old = this.totalAttacks.get();
         }while(!(totalAttacks.compareAndSet(old,old+1)));
@@ -115,10 +110,6 @@ public class Diary {
     public void setLandoTerminate(long landoTerminate) {
         LandoTerminate = landoTerminate;
     }
-
-//    public static void setInstance(Diary instance) {
-//        Diary.instance = instance;
-//    }
 
 
 

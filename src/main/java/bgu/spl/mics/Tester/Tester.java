@@ -109,7 +109,7 @@ public class Tester {
         Test currentTests[];
         Diary diaryInstance = Diary.getInstance();
         try {
-            currentTests = getTestsFromJson("C:\\Users\\sapir\\Desktop\\SPL211\\spl211-2\\src\\main\\Tests.json");
+            currentTests = getTestsFromJson("/home/spl211/IdeaProjects/SPL-Assignment2/src/main/Tests.json");
             for (int i = 0; i < currentTests.length; i++) {
                 saveOutputToJson("input.json", currentTests[i]);
                 //An output file shall be only created whenever the program finishes it's logic.

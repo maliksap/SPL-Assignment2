@@ -1,5 +1,9 @@
 package bgu.spl.mics.application.passiveObjects;
-import com.google.gson.Gson;
+
+
+/**
+ * Passive object representing the input data.
+ */
 
 public class Input {
     private Attack[] attacks;

@@ -1,9 +1,10 @@
 package bgu.spl.mics.application.messages;
 import bgu.spl.mics.Event;
-import bgu.spl.mics.Future;
 import bgu.spl.mics.application.passiveObjects.Attack;
 
-import java.lang.reflect.Type;
+/**
+ * A message that represents an attack to be performed.
+ */
 
 public class AttackEvent implements Event<Boolean> {
     final private Attack attack;
